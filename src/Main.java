@@ -5,6 +5,7 @@ import velora.exception.RoomNotAvailableException;
 import velora.model.*;
 import velora.payment.*;
 import velora.service.HotelEngine;
+import velora.service.InvoiceService;
 
 import java.util.Scanner;
 
@@ -33,6 +34,12 @@ public class Main {
             System.out.println("[4] Terminate System");
             System.out.print(">> Select Operation: ");
 
+            if (!sc.hasNextInt()) {
+                System.out.println("✖ Invalid input. Please enter a number.");
+                sc.nextLine();
+                continue;
+            }
+
             int choice = sc.nextInt();
             sc.nextLine();
 
@@ -44,9 +51,9 @@ public class Main {
 
                 case 2:
                     System.out.print("\nGuest Full Name: ");
-                    String name = sc.nextLine();
+                    String name = sc.nextLine().trim();
                     System.out.print("Contact Number : ");
-                    String phone = sc.nextLine();
+                    String phone = sc.nextLine().trim();
                     Guest guest = new Guest("GST-" + (100 + (int)(Math.random() * 900)), name, phone);
 
                     System.out.print("Enter Target Suite Number: ");
@@ -75,7 +82,7 @@ public class Main {
                         break;
                     }
 
-                    System.out.printf("Bill Balance for %s: $%.2f\n", b.getGuest().getFullName(), b.getTotalTariff());
+                    System.out.printf("\nBill Balance for %s: $%.2f\n", b.getGuest().getFullName(), b.getTotalTariff());
                     System.out.println("Payment Gateway: [1] Credit Card  [2] Cash");
                     System.out.print("Selection: ");
                     int pType = sc.nextInt();
@@ -84,7 +91,7 @@ public class Main {
                     Payment pEngine;
                     if (pType == 1) {
                         System.out.print("Enter 16-Digit Card Number: ");
-                        String card = sc.nextLine();
+                        String card = sc.nextLine().trim();
                         pEngine = new CardPayment("TXN-" + System.currentTimeMillis() % 100000, b.getTotalTariff(), card);
                     } else {
                         System.out.print("Enter Cash Amount Handed: ");
@@ -95,6 +102,13 @@ public class Main {
 
                     if (pEngine.processPayment(b.getTotalTariff())) {
                         System.out.println("\n" + pEngine.generateReceipt());
+
+                        // Generate persistent invoice file
+                        String invoicePath = InvoiceService.generateInvoice(b, pEngine);
+                        if (invoicePath != null) {
+                            System.out.println("📄 Official Folio Saved: " + invoicePath);
+                        }
+
                         velora.finalizeCheckout(ref);
                         System.out.println("✔ Suite #" + b.getRoom().getRoomNumber() + " is now vacated and cleaned.");
                     } else {
@@ -105,6 +119,10 @@ public class Main {
                 case 4:
                     running = false;
                     System.out.println("\nSystem safely disconnected.");
+                    break;
+
+                default:
+                    System.out.println("✖ Invalid selection. Choose options 1 to 4.");
                     break;
             }
         }
