@@ -1,0 +1,344 @@
+import React, { useState } from 'react';
+import {
+  Sparkles,
+  CheckCircle2,
+  X,
+  ArrowRight,
+  Shield,
+  Wifi,
+  Coffee,
+  Tv
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import VeloraLogo from './VeloraLogo';
+
+const SUITES = [
+  {
+    roomNumber: 101,
+    tier: 'Standard',
+    name: 'Executive Studio Suite',
+    price: 120.0,
+    image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80',
+    description: 'A minimalist sanctuary featuring acoustic soundproofing, ergonomic workstation, high-speed fiber Wi-Fi, and rainfall marble shower.',
+    amenities: ['Fiber Wi-Fi', 'Smart 4K TV', 'Queen Bed', 'Espresso Bar'],
+    isBooked: false,
+  },
+  {
+    roomNumber: 201,
+    tier: 'Deluxe',
+    name: 'Skyline Panorama Suite',
+    price: 250.0,
+    image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80',
+    description: 'Floor-to-ceiling panoramic glass offering breathtaking skyline vistas, complimentary champagne breakfast, and deep-soaking bath.',
+    amenities: ['Skyline Balcony', 'Gourmet Breakfast', 'King Size Bed', 'Marble Bath'],
+    isBooked: false,
+  },
+  {
+    roomNumber: 301,
+    tier: 'Penthouse',
+    name: 'Imperial Presidential Sanctuary',
+    price: 750.0,
+    image: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200&q=80',
+    description: 'The pinnacle of bespoke luxury. Private rooftop infinity jacuzzi, 24/7 dedicated butler, curated mini-bar tab, and private elevator access.',
+    amenities: ['Private Butler', 'Curated Mini-Bar', 'Infinity Spa', 'Private Elevators'],
+    isBooked: false,
+  }
+];
+
+export default function App() {
+  const [suites, setSuites] = useState(SUITES);
+  const [filterTier, setFilterTier] = useState('ALL');
+  const [selectedSuite, setSelectedSuite] = useState(null);
+  const [bookingDetails, setBookingDetails] = useState({ name: '', phone: '', nights: 1 });
+  const [activeBooking, setActiveBooking] = useState(null);
+
+  const filteredSuites = suites.filter(s =>
+    filterTier === 'ALL' ? true : s.tier.toLowerCase() === filterTier.toLowerCase()
+  );
+
+  const handleBooking = (e) => {
+    e.preventDefault();
+    const rate = selectedSuite.price * bookingDetails.nights;
+    const taxAndSurcharge = selectedSuite.tier === 'Penthouse' ? rate * 0.18 : 0;
+    const total = rate + taxAndSurcharge;
+
+    const booking = {
+      id: 'VEL-' + Math.floor(10000 + Math.random() * 90000),
+      suite: selectedSuite,
+      ...bookingDetails,
+      totalTariff: total
+    };
+
+    setSuites(suites.map(s => s.roomNumber === selectedSuite.roomNumber ? { ...s, isBooked: true } : s));
+    setActiveBooking(booking);
+    setSelectedSuite(null);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#080A0D] text-[#F8F9FA] selection:bg-[#D4AF37] selection:text-black">
+
+      {/* Navigation Bar */}
+      <header className="fixed top-0 inset-x-0 z-40 backdrop-blur-xl bg-[#080A0D]/80 border-b border-[#1E2530] px-8 md:px-20 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3.5 group cursor-pointer">
+          <VeloraLogo size={42} className="group-hover:scale-105 group-hover:drop-shadow-[0_0_18px_rgba(212,175,55,0.4)]" />
+          <div className="flex flex-col">
+            <span className="font-['Cinzel'] tracking-[0.38em] text-xl font-bold text-[#D4AF37] leading-tight">VELORA</span>
+            <span className="text-[8px] font-['Cinzel'] tracking-[0.32em] text-[#8E9BAE] uppercase">Grand Resort</span>
+          </div>
+        </div>
+
+        <nav className="hidden md:flex items-center gap-12 text-[11px] font-['Cinzel'] tracking-[0.25em] text-[#8E9BAE]">
+          <a href="#suites" className="hover:text-[#D4AF37] transition-colors">Sanctuary</a>
+          <a href="#suites" className="hover:text-[#D4AF37] transition-colors">Experiences</a>
+          <a href="#suites" className="hover:text-[#D4AF37] transition-colors">Concierge</a>
+        </nav>
+
+        <a
+          href="#suites"
+          className="text-[10px] font-['Cinzel'] uppercase tracking-[0.25em] font-semibold px-6 py-2.5 rounded-full border border-[#D4AF37]/60 text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black transition-all duration-300 shadow-[0_0_15px_rgba(212,175,55,0.12)]"
+        >
+          Reserve Stay
+        </a>
+      </header>
+
+      {/* Hero Section */}
+      <section className="relative pt-44 pb-28 px-6 md:px-20 flex flex-col items-center text-center overflow-hidden">
+        <div className="absolute top-1/4 w-[500px] h-[500px] bg-[#D4AF37]/5 rounded-full blur-[120px] pointer-events-none" />
+
+        <div className="inline-flex items-center gap-2 border border-[#D4AF37]/25 bg-[#D4AF37]/5 px-4 py-1.5 rounded-full mb-6">
+          <Sparkles className="w-3 h-3 text-[#D4AF37]" />
+          <span className="text-[10px] font-['Cinzel'] uppercase tracking-[0.35em] text-[#D4AF37] font-semibold">
+            Bespoke Luxury Protocol
+          </span>
+        </div>
+
+        <h1 className="font-['Cormorant_Garamond'] text-5xl md:text-8xl max-w-4xl leading-[1.05] font-light tracking-tight mb-6">
+          Unrivaled Elegance. <br />
+          <span className="italic font-normal gold-gradient-text">Unforgettable Sanctuary.</span>
+        </h1>
+
+        <p className="text-[#8E9BAE] max-w-xl text-sm md:text-base font-light leading-relaxed mb-12">
+          Experience an elevated standard of private indulgence. Hand-tailored suites, penthouse lounges, and automated concierge reservations.
+        </p>
+
+        <div className="flex items-center gap-4">
+          <a
+            href="#suites"
+            className="inline-flex items-center gap-3 bg-[#D4AF37] text-black font-['Cinzel'] font-semibold text-xs tracking-[0.2em] uppercase px-8 py-4 rounded-full hover:bg-[#E5C158] transition-all shadow-[0_0_35px_rgba(212,175,55,0.25)]"
+          >
+            Explore Suites <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
+      </section>
+
+      {/* Suites Showcase */}
+      <section id="suites" className="px-6 md:px-20 py-24 border-t border-[#1E2530] max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div>
+            <span className="text-[10px] font-['Cinzel'] uppercase tracking-[0.35em] text-[#D4AF37] block mb-2 font-semibold">
+              Curated Residences
+            </span>
+            <h2 className="font-['Cormorant_Garamond'] text-4xl md:text-6xl font-light">
+              Sanctuary <span className="italic">Portfolio</span>
+            </h2>
+          </div>
+
+          <div className="flex items-center gap-1.5 p-1.5 rounded-full bg-[#11151C] border border-[#1E2530]">
+            {['ALL', 'Standard', 'Deluxe', 'Penthouse'].map((tier) => (
+              <button
+                key={tier}
+                onClick={() => setFilterTier(tier)}
+                className={`px-5 py-2 rounded-full text-[10px] font-['Cinzel'] font-semibold tracking-[0.2em] uppercase transition-all ${
+                  filterTier === tier
+                    ? 'bg-[#D4AF37] text-black shadow-md'
+                    : 'text-[#8E9BAE] hover:text-white'
+                }`}
+              >
+                {tier}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Room Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {filteredSuites.map((suite) => (
+            <div
+              key={suite.roomNumber}
+              className="group bg-[#11151C] rounded-3xl overflow-hidden border border-[#1E2530] hover:border-[#D4AF37]/60 transition-all duration-500 flex flex-col justify-between shadow-2xl"
+            >
+              <div>
+                <div className="relative h-72 overflow-hidden">
+                  <img
+                    src={suite.image}
+                    alt={suite.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-90 group-hover:brightness-100"
+                  />
+                  <div className="absolute top-4 left-4 bg-[#080A0D]/80 backdrop-blur-md px-3.5 py-1 rounded-full text-[9px] font-['Cinzel'] uppercase tracking-[0.25em] text-[#D4AF37] border border-[#D4AF37]/30">
+                    {suite.tier}
+                  </div>
+                  <div className="absolute bottom-4 right-4 bg-[#080A0D]/90 backdrop-blur-md px-4 py-1.5 rounded-xl border border-[#1E2530]">
+                    <span className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#F8F9FA]">${suite.price}</span>
+                    <span className="text-[10px] font-light text-[#8E9BAE] ml-1">/ night</span>
+                  </div>
+                </div>
+
+                <div className="p-7">
+                  <span className="text-[10px] font-['Cinzel'] tracking-[0.25em] uppercase text-[#8E9BAE] block mb-1">
+                    Suite #{suite.roomNumber}
+                  </span>
+                  <h3 className="font-['Cormorant_Garamond'] text-2xl font-medium mb-3 group-hover:text-[#D4AF37] transition-colors leading-snug">
+                    {suite.name}
+                  </h3>
+                  <p className="text-xs text-[#8E9BAE] font-light leading-relaxed mb-6">
+                    {suite.description}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {suite.amenities.map((item, idx) => (
+                      <span key={idx} className="text-[10px] bg-[#080A0D] border border-[#1E2530] px-3 py-1 rounded-md text-[#8E9BAE] tracking-wide">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-7 pt-0">
+                <button
+                  disabled={suite.isBooked}
+                  onClick={() => setSelectedSuite(suite)}
+                  className={`w-full py-3.5 rounded-2xl text-[11px] font-['Cinzel'] uppercase tracking-[0.2em] font-semibold transition-all ${
+                    suite.isBooked
+                      ? 'bg-[#1E2530] text-[#8E9BAE] cursor-not-allowed'
+                      : 'bg-[#F8F9FA] text-black hover:bg-[#D4AF37] hover:shadow-[0_0_25px_rgba(212,175,55,0.25)]'
+                  }`}
+                >
+                  {suite.isBooked ? 'Occupied' : 'Reserve Suite'}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Reservation Modal */}
+      <AnimatePresence>
+        {selectedSuite && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-[#11151C] border border-[#D4AF37]/30 rounded-3xl max-w-lg w-full p-8 relative shadow-2xl"
+            >
+              <button
+                onClick={() => setSelectedSuite(null)}
+                className="absolute top-6 right-6 text-[#8E9BAE] hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <span className="text-[9px] font-['Cinzel'] uppercase tracking-[0.3em] text-[#D4AF37] block mb-1">
+                Reservation Protocol
+              </span>
+              <h3 className="font-['Cormorant_Garamond'] text-3xl font-medium mb-6">{selectedSuite.name}</h3>
+
+              <form onSubmit={handleBooking} className="space-y-4">
+                <div>
+                  <label className="text-[10px] font-['Cinzel'] uppercase tracking-[0.2em] text-[#8E9BAE] block mb-1.5">Guest Full Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={bookingDetails.name}
+                    onChange={(e) => setBookingDetails({...bookingDetails, name: e.target.value})}
+                    placeholder="e.g. Lord Alexander Vance"
+                    className="w-full bg-[#080A0D] border border-[#1E2530] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#D4AF37] text-white"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-['Cinzel'] uppercase tracking-[0.2em] text-[#8E9BAE] block mb-1.5">Direct Contact Number</label>
+                  <input
+                    type="tel"
+                    required
+                    value={bookingDetails.phone}
+                    onChange={(e) => setBookingDetails({...bookingDetails, phone: e.target.value})}
+                    placeholder="+1 (555) 928-1100"
+                    className="w-full bg-[#080A0D] border border-[#1E2530] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#D4AF37] text-white"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-['Cinzel'] uppercase tracking-[0.2em] text-[#8E9BAE] block mb-1.5">Duration (Nights)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="30"
+                    required
+                    value={bookingDetails.nights}
+                    onChange={(e) => setBookingDetails({...bookingDetails, nights: parseInt(e.target.value) || 1})}
+                    className="w-full bg-[#080A0D] border border-[#1E2530] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#D4AF37] text-white"
+                  />
+                </div>
+
+                <div className="border-t border-[#1E2530] pt-4 mt-6 flex justify-between items-center text-sm">
+                  <span className="text-[#8E9BAE] text-xs">Calculated Total {selectedSuite.tier === 'Penthouse' && '(+18% Luxury Tax)'}:</span>
+                  <span className="font-['Cormorant_Garamond'] text-3xl font-semibold text-[#D4AF37]">
+                    ${(selectedSuite.price * bookingDetails.nights * (selectedSuite.tier === 'Penthouse' ? 1.18 : 1.0)).toFixed(2)}
+                  </span>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-[#D4AF37] text-black py-4 rounded-2xl text-[11px] font-['Cinzel'] uppercase tracking-[0.25em] font-semibold hover:bg-[#E5C158] transition-colors mt-6 shadow-[0_0_20px_rgba(212,175,55,0.2)]"
+                >
+                  Confirm Stay
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Folio Modal */}
+      <AnimatePresence>
+        {activeBooking && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-[#11151C] border border-[#D4AF37]/50 rounded-3xl max-w-md w-full p-8 text-center shadow-2xl"
+            >
+              <div className="w-14 h-14 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37] text-[#D4AF37] mx-auto flex items-center justify-center mb-5">
+                <CheckCircle2 className="w-7 h-7" />
+              </div>
+              <span className="text-[9px] font-['Cinzel'] uppercase tracking-[0.3em] text-[#D4AF37] block mb-1">
+                Reservation Verified
+              </span>
+              <h3 className="font-['Cormorant_Garamond'] text-3xl mb-2">Welcome to Velora</h3>
+              <p className="text-xs text-[#8E9BAE] mb-6">Booking ID: <strong className="text-white font-mono">{activeBooking.id}</strong></p>
+
+              <div className="bg-[#080A0D] rounded-2xl p-5 border border-[#1E2530] text-left space-y-3 text-xs mb-6 font-light">
+                <div className="flex justify-between"><span className="text-[#8E9BAE]">Guest:</span> <span className="font-medium text-white">{activeBooking.name}</span></div>
+                <div className="flex justify-between"><span className="text-[#8E9BAE]">Suite:</span> <span className="text-white">#{activeBooking.suite.roomNumber} ({activeBooking.suite.tier})</span></div>
+                <div className="flex justify-between"><span className="text-[#8E9BAE]">Duration:</span> <span className="text-white">{activeBooking.nights} Night(s)</span></div>
+                <div className="flex justify-between font-semibold border-t border-[#1E2530] pt-3 text-sm text-[#D4AF37]">
+                  <span>Total Settled:</span>
+                  <span className="font-['Cormorant_Garamond'] text-xl font-bold">${activeBooking.totalTariff.toFixed(2)}</span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setActiveBooking(null)}
+                className="w-full bg-[#F8F9FA] text-black py-3.5 rounded-2xl text-[10px] font-['Cinzel'] uppercase tracking-[0.25em] font-semibold hover:bg-[#D4AF37] transition-all"
+              >
+                Return to Dashboard
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+    </div>
+  );
+}

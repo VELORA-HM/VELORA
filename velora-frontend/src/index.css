@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --color-velora-bg: #080A0D;
+  --color-velora-card: #11151C;
+  --color-velora-border: #1E2530;
+  --color-velora-gold: #D4AF37;
+  --color-velora-gold-hover: #E5C158;
+  --color-velora-muted: #8E9BAE;
+  --color-velora-cream: #F8F9FA;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-display: "Cinzel", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: #080A0D;
+  color: #F8F9FA;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #FFF1C5 0%, #D4AF37 50%, #9A7B1C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom Luxury Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #080A0D;
+}
+::-webkit-scrollbar-thumb {
+  background: #1E2530;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D4AF37;
+}
