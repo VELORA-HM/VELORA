@@ -16,7 +16,7 @@ public class DeluxeRoom extends Room {
 
     @Override
     public String toString() {
-        return String.format("[Deluxe Suite #%d] Base: $%.2f/night (+12%% Tax & VIP Concierge) | Status: %s",
+        return String.format("[Deluxe Suite #%d] Base: ₹%.2f/night (+12%% Tax & VIP Concierge) | Status: %s",
                 getRoomNumber(), getBasePrice(), isBooked() ? "OCCUPIED" : "AVAILABLE");
     }
 }

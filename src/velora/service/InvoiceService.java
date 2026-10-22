@@ -41,7 +41,7 @@ public class InvoiceService {
             writer.printf("  Suite No.   : #%d\n", booking.getRoom().getRoomNumber());
             writer.printf("  Suite Type  : %s\n", booking.getRoom().getClass().getSimpleName());
             writer.printf("  Duration    : %d Night(s)\n", booking.getNights());
-            writer.printf("  Total Due   : $%.2f\n", booking.getTotalTariff());
+            writer.printf("  Total Due   : ₹%.2f\n", booking.getTotalTariff());
             writer.println("----------------------------------------------------------");
             writer.println(" PAYMENT SETTLEMENT:");
             writer.printf("  Method      : %s\n", payment.getPaymentMethod());

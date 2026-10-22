@@ -208,7 +208,7 @@ public class VeloraServer {
                     writer.write("----------------------------------------------------\n");
                     writer.write("Suite Reserved  : #" + room + " (" + tier + " Tier)\n");
                     writer.write("Stay Duration   : " + nights + " Night(s)\n");
-                    writer.write("Settled Tariff  : $" + String.format("%.2f", total) + "\n");
+                    writer.write("Settled Tariff  : ₹" + String.format("%.2f", total) + "\n");
                     writer.write("====================================================\n");
                 }
             } catch (Exception e) {

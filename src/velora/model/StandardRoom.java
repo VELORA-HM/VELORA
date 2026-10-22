@@ -12,7 +12,7 @@ public class StandardRoom extends Room {
 
     @Override
     public String toString() {
-        return String.format("[Standard Suite #%d] Base: $%.2f/night | Status: %s",
+        return String.format("[Standard Suite #%d] Base: ₹%.2f/night | Status: %s",
                 getRoomNumber(), getBasePrice(), isBooked() ? "OCCUPIED" : "AVAILABLE");
     }
 }

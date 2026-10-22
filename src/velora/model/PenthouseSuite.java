@@ -34,7 +34,7 @@ public class PenthouseSuite extends Room {
 
     @Override
     public String toString() {
-        return String.format("[👑 Presidential Penthouse #%d] Base: $%.2f/night (+18%% Tax + Butler Concierge) | Status: %s",
+        return String.format("[👑 Presidential Penthouse #%d] Base: ₹%.2f/night (+18%% Tax + Butler Concierge) | Status: %s",
                 getRoomNumber(), getBasePrice(), isBooked() ? "OCCUPIED" : "AVAILABLE");
     }
 }

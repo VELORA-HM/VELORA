@@ -71,12 +71,12 @@ public class Main {
                             filtered.forEach(System.out::println);
                         }
                     } else {
-                        System.out.print("Enter Max Budget ($): ");
+                        System.out.print("Enter Max Budget (₹): ");
                         double max = sc.nextDouble();
                         sc.nextLine();
                         List<Room> filtered = velora.filterRoomsByMaxPrice(max);
                         if (filtered.isEmpty()) {
-                            System.out.println("✖ No suites found under $" + max);
+                            System.out.println("✖ No suites found under ₹" + max);
                         } else {
                             filtered.forEach(System.out::println);
                         }
@@ -101,7 +101,7 @@ public class Main {
                         System.out.println("\n✔ RESERVATION CONFIRMED");
                         System.out.println("  Booking Ref : " + b.getBookingId());
                         System.out.println("  Guest Name  : " + b.getGuest().getFullName());
-                        System.out.printf("  Total Tariff: $%.2f\n", b.getTotalTariff());
+                        System.out.printf("  Total Tariff: ₹%.2f\n", b.getTotalTariff());
                     } catch (RoomNotAvailableException | InvalidBookingException e) {
                         LoggerService.logError("Reservation Failed for Suite " + roomNum, e);
                         System.out.println("✖ ERROR: " + e.getMessage());
@@ -120,11 +120,11 @@ public class Main {
 
                     if (barBooking.getRoom() instanceof PenthouseSuite) {
                         PenthouseSuite ps = (PenthouseSuite) barBooking.getRoom();
-                        System.out.print("Enter Mini-Bar charge ($): ");
+                        System.out.print("Enter Mini-Bar charge (₹): ");
                         double barCost = sc.nextDouble();
                         sc.nextLine();
                         ps.addMiniBarUsage(barCost);
-                        System.out.printf("✔ Added $%.2f. Updated Total: $%.2f\n", barCost, ps.calculateTariff(barBooking.getNights()));
+                        System.out.printf("✔ Added ₹%.2f. Updated Total: ₹%.2f\n", barCost, ps.calculateTariff(barBooking.getNights()));
                     } else {
                         System.out.println("✖ Mini-Bar billing is exclusive to Penthouse suites.");
                     }
@@ -140,7 +140,7 @@ public class Main {
                     }
 
                     double totalDue = b.getRoom().calculateTariff(b.getNights());
-                    System.out.printf("\nBalance for %s: $%.2f\n", b.getGuest().getFullName(), totalDue);
+                    System.out.printf("\nBalance for %s: ₹%.2f\n", b.getGuest().getFullName(), totalDue);
                     System.out.println("Payment Gateway: [1] Credit Card  [2] Cash");
                     System.out.print("Selection: ");
                     int pType = sc.nextInt();

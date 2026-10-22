@@ -19,7 +19,7 @@ public class CardPayment extends Payment {
 
     @Override
     public String generateReceipt() {
-        return String.format("[RECEIPT] TXN: %s | Amount: $%.2f | Method: %s | Status: APPROVED",
+        return String.format("[RECEIPT] TXN: %s | Amount: ₹%.2f | Method: %s | Status: APPROVED",
                 transactionId, amount, getPaymentMethod());
     }
 }
