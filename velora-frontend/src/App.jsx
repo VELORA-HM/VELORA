@@ -6,7 +6,7 @@ const defaultSuites = [
     roomNumber: 101,
     tier: 'Standard',
     name: 'Executive Studio Suite',
-    price: 120.0,
+    price: 10000.0,
     isBooked: false,
     image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80',
     description: 'A minimalist sanctuary featuring acoustic soundproofing, ergonomic workstation, high-speed fiber Wi-Fi, and rainfall marble shower.',
@@ -16,7 +16,7 @@ const defaultSuites = [
     roomNumber: 201,
     tier: 'Deluxe',
     name: 'Skyline Panorama Suite',
-    price: 250.0,
+    price: 18500.0,
     isBooked: false,
     image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80',
     description: 'Floor-to-ceiling panoramic glass offering breathtaking skyline vistas, complimentary champagne breakfast, and deep-soaking bath.',
@@ -26,7 +26,7 @@ const defaultSuites = [
     roomNumber: 301,
     tier: 'Penthouse',
     name: 'Imperial Presidential Sanctuary',
-    price: 750.0,
+    price: 55000.0,
     isBooked: false,
     image: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200&q=80',
     description: 'The pinnacle of bespoke luxury. Private rooftop infinity jacuzzi, 24/7 dedicated butler, curated mini-bar tab, and private elevator access.',
@@ -186,7 +186,7 @@ export default function App() {
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                 />
                 <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 text-xs font-serif text-[#D4AF37]">
-                  ${suite.price.toFixed(0)} <span className="text-[10px] text-zinc-400 font-sans">/night</span>
+                  ₹{suite.price.toFixed(0)} <span className="text-[10px] text-zinc-400 font-sans">/night</span>
                 </div>
               </div>
 
@@ -238,7 +238,7 @@ export default function App() {
               className="bg-[#0D1117] border border-[#1E2530] rounded-2xl p-8 max-w-md w-full shadow-2xl relative"
             >
               <h3 className="text-xl font-serif text-white">Reserve {selectedSuite.name}</h3>
-              <p className="text-xs text-zinc-400 mt-1 mb-6">Suite #{selectedSuite.roomNumber} • ${selectedSuite.price}/night</p>
+              <p className="text-xs text-zinc-400 mt-1 mb-6">Suite #{selectedSuite.roomNumber} • ₹{selectedSuite.price}/night</p>
 
               <form onSubmit={handleBookingSubmit} className="space-y-4">
                 <div>
@@ -281,7 +281,7 @@ export default function App() {
                 <div className="pt-4 border-t border-[#1E2530] flex justify-between items-center text-xs">
                   <span className="text-zinc-400">Total Settlement:</span>
                   <span className="text-base font-serif text-[#D4AF37]">
-                    ${(selectedSuite.price * nights * (selectedSuite.tier === 'Penthouse' ? 1.18 : 1)).toFixed(2)}
+                    ₹{(selectedSuite.price * nights * (selectedSuite.tier === 'Penthouse' ? 1.18 : 1)).toFixed(2)}
                   </span>
                 </div>
 
@@ -342,7 +342,7 @@ export default function App() {
                 </div>
                 <div className="flex justify-between border-t border-[#1E2530] pt-2 text-sm">
                   <span className="text-zinc-400">Total Settled:</span>
-                  <span className="text-[#D4AF37] font-bold">${Number(activeBooking.totalTariff).toFixed(2)}</span>
+                  <span className="text-[#D4AF37] font-bold">₹{Number(activeBooking.totalTariff).toFixed(2)}</span>
                 </div>
               </div>
 
