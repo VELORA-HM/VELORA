@@ -24,7 +24,9 @@ bin/
 /.nb-gradle/
 
 ### VS Code ###
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
 
 ### Mac OS ###
 .DS_Store
@@ -33,3 +35,6 @@ db.properties
 logs/invoices/
 receipts/
 .playwright-mcp/
+lib/*.jar
+report/
+shots/

@@ -11,12 +11,14 @@ A hotel suite reservation system: a React frontend, a Core Java OOP backend, and
 
 **2. Give Java your MySQL password.** Copy `db.properties.example` to `db.properties` and set `db.password`. (`db.properties` is git-ignored.)
 
-**3. Start the backend.** In IntelliJ, run `VeloraServer` (the MySQL Connector/J library is already attached to the module). Or from the terminal:
-```bash
-javac -d out -cp mysql-connector-j.jar $(find src -name '*.java')
-java -cp out:mysql-connector-j.jar VeloraServer
-```
-You should see `VELORA GRAND PROTOCOL SERVER RUNNING ON PORT 8080`.
+**3. Start the backend.** Put the MySQL Connector/J jar (`mysql-connector-j-<version>.jar`, from dev.mysql.com/downloads/connector/j) in the `lib/` folder, then either:
+- **VS Code** (with the Extension Pack for Java): open the project folder, go to *Run and Debug*, pick **VeloraServer (API on :8080)** and press ▶. `.vscode/settings.json` already points VS Code at `src/` and `lib/`.
+- **Terminal:**
+  ```bash
+  ./run-server.sh
+  ```
+
+You should see `VELORA GRAND PROTOCOL SERVER RUNNING ON PORT 8080`. The console front desk is the **Main (console front desk)** run configuration.
 
 **4. Start the frontend.**
 ```bash
