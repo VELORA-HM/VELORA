@@ -9,6 +9,10 @@ public class PenthouseSuite extends Room {
         super(roomNumber, basePrice);
     }
 
+    public PenthouseSuite(int roomNumber, String name, double basePrice) {
+        super(roomNumber, name, basePrice);
+    }
+
     public void addMiniBarUsage(double amount) {
         if (amount > 0) {
             this.miniBarCharges += amount;
@@ -21,6 +25,12 @@ public class PenthouseSuite extends Room {
         double subtotal = baseTotal + (baseTotal * PENTHOUSE_TAX) + (BUTLER_SERVICE_FEE * nights);
         return subtotal + miniBarCharges;
     }
+
+    @Override
+    public String getTier() { return "Penthouse"; }
+
+    @Override
+    public String getTariffRule() { return "Rate × nights + 18% luxury tax + ₹100/night butler"; }
 
     @Override
     public void vacate() {

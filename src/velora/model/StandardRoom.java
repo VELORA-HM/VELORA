@@ -5,10 +5,20 @@ public class StandardRoom extends Room {
         super(roomNumber, basePrice);
     }
 
+    public StandardRoom(int roomNumber, String name, double basePrice) {
+        super(roomNumber, name, basePrice);
+    }
+
     @Override
     public double calculateTariff(int nights) {
         return getBasePrice() * nights;
     }
+
+    @Override
+    public String getTier() { return "Standard"; }
+
+    @Override
+    public String getTariffRule() { return "Room rate × nights"; }
 
     @Override
     public String toString() {

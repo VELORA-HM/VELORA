@@ -8,11 +8,21 @@ public class DeluxeRoom extends Room {
         super(roomNumber, basePrice);
     }
 
+    public DeluxeRoom(int roomNumber, String name, double basePrice) {
+        super(roomNumber, name, basePrice);
+    }
+
     @Override
     public double calculateTariff(int nights) {
         double subtotal = getBasePrice() * nights;
         return subtotal + (subtotal * LUXURY_TAX_RATE) + (AMENITIES_FEE * nights);
     }
+
+    @Override
+    public String getTier() { return "Deluxe"; }
+
+    @Override
+    public String getTariffRule() { return "Rate × nights + 12% luxury tax + ₹35/night concierge"; }
 
     @Override
     public String toString() {

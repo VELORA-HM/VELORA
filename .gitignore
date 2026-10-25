@@ -28,3 +28,8 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+### Velora local files ###
+db.properties
+logs/invoices/
+receipts/
+.playwright-mcp/

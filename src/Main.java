@@ -88,7 +88,7 @@ public class Main {
                     String name = sc.nextLine().trim();
                     System.out.print("Contact Number : ");
                     String phone = sc.nextLine().trim();
-                    Guest guest = new Guest("GST-" + (100 + (int)(Math.random() * 900)), name, phone);
+                    Guest guest = new Guest(name, phone, null);
 
                     System.out.print("Enter Suite Number: ");
                     int roomNum = sc.nextInt();
@@ -99,10 +99,10 @@ public class Main {
                     try {
                         Booking b = velora.processReservation(guest, roomNum, nights);
                         System.out.println("\n✔ RESERVATION CONFIRMED");
-                        System.out.println("  Booking Ref : " + b.getBookingId());
+                        System.out.println("  Booking Ref : " + b.getBookingRef());
                         System.out.println("  Guest Name  : " + b.getGuest().getFullName());
                         System.out.printf("  Total Tariff: ₹%.2f\n", b.getTotalTariff());
-                    } catch (RoomNotAvailableException | InvalidBookingException e) {
+                    } catch (RoomNotAvailableException | InvalidBookingException | java.sql.SQLException e) {
                         LoggerService.logError("Reservation Failed for Suite " + roomNum, e);
                         System.out.println("✖ ERROR: " + e.getMessage());
                     }
@@ -164,7 +164,7 @@ public class Main {
                         if (invoicePath != null) {
                             System.out.println("📄 Official Folio Saved: " + invoicePath);
                         }
-                        velora.finalizeCheckout(ref);
+                        velora.finalizeCheckout(ref, pEngine);
                         System.out.println("✔ Suite #" + b.getRoom().getRoomNumber() + " is now vacated and cleaned.");
                     } else {
                         System.out.println("✖ Insufficient funds. Settlement aborted.");

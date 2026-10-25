@@ -23,6 +23,12 @@ public class CashPayment extends Payment {
     public String getPaymentMethod() { return "Cash Tendered"; }
 
     @Override
+    public String getMethodCode() { return "CASH"; }
+
+    @Override
+    public String getReference() { return null; }
+
+    @Override
     public String generateReceipt() {
         return String.format("[RECEIPT] TXN: %s | Amount: ₹%.2f | Tendered: ₹%.2f | Change Returned: ₹%.2f",
                 transactionId, amount, cashTendered, getChange());

@@ -5,7 +5,7 @@ public class CardPayment extends Payment {
 
     public CardPayment(String transactionId, double amount, String rawCardNumber) {
         super(transactionId, amount);
-        this.maskedCardNumber = "•••• " + rawCardNumber.substring(Math.max(0, rawCardNumber.length() - 4));
+        this.maskedCardNumber = "**** " + rawCardNumber.substring(Math.max(0, rawCardNumber.length() - 4));
     }
 
     @Override
@@ -16,6 +16,12 @@ public class CardPayment extends Payment {
 
     @Override
     public String getPaymentMethod() { return "Card (" + maskedCardNumber + ")"; }
+
+    @Override
+    public String getMethodCode() { return "CARD"; }
+
+    @Override
+    public String getReference() { return maskedCardNumber; }
 
     @Override
     public String generateReceipt() {

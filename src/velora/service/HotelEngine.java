@@ -1,17 +1,27 @@
 package velora.service;
 
+import velora.dao.BookingDAO;
+import velora.dao.PaymentDAO;
+import velora.dao.RoomDAO;
 import velora.exception.InvalidBookingException;
 import velora.exception.RoomNotAvailableException;
 import velora.model.*;
+import velora.payment.Payment;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/** Console front desk (Main.java). Uses the same DAO + service layer as the web server. */
 public class HotelEngine {
     private final String hotelName;
     private final List<Room> inventory = new ArrayList<>();
     private final Map<String, Booking> activeBookings = new HashMap<>();
+    private final ReservationService reservations = new ReservationService();
+    private final BookingDAO bookingDAO = new BookingDAO();
+    private final PaymentDAO paymentDAO = new PaymentDAO();
 
     public HotelEngine(String hotelName) {
         this.hotelName = hotelName;
@@ -19,29 +29,9 @@ public class HotelEngine {
     }
 
     private void loadRoomsFromDatabase() {
-        try (Connection conn = DBConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM rooms")) {
-
+        try {
             inventory.clear();
-            while (rs.next()) {
-                int rNum = rs.getInt("room_number");
-                String rType = rs.getString("room_type");
-                double price = rs.getDouble("base_price");
-                boolean isBooked = rs.getBoolean("is_booked");
-
-                Room room;
-                if ("DeluxeRoom".equalsIgnoreCase(rType)) {
-                    room = new DeluxeRoom(rNum, price);
-                } else if ("PenthouseSuite".equalsIgnoreCase(rType)) {
-                    room = new PenthouseSuite(rNum, price);
-                } else {
-                    room = new StandardRoom(rNum, price);
-                }
-
-                if (isBooked) room.book();
-                inventory.add(room);
-            }
+            inventory.addAll(new RoomDAO().findAll());
         } catch (SQLException e) {
             LoggerService.logError("Database Room Sync", e);
             System.out.println("⚠ Notice: MySQL database offline. Operating in in-memory session mode.");
@@ -58,7 +48,7 @@ public class HotelEngine {
 
     public List<Room> filterRoomsByType(String type) {
         return inventory.stream()
-                .filter(r -> r.getClass().getSimpleName().toLowerCase().contains(type.toLowerCase()))
+                .filter(r -> r.getTier().equalsIgnoreCase(type))
                 .collect(Collectors.toList());
     }
 
@@ -69,77 +59,26 @@ public class HotelEngine {
     }
 
     public Booking processReservation(Guest guest, int roomNumber, int nights)
-            throws RoomNotAvailableException, InvalidBookingException {
-        if (nights <= 0) throw new InvalidBookingException("Duration must be at least 1 night.");
-
-        Room target = inventory.stream()
-                .filter(r -> r.getRoomNumber() == roomNumber)
-                .findFirst()
-                .orElseThrow(() -> new RoomNotAvailableException("Suite #" + roomNumber + " does not exist."));
-
-        if (target.isBooked()) {
-            throw new RoomNotAvailableException("Suite #" + roomNumber + " is currently occupied.");
-        }
-
-        String bookingId = "BK-" + (1000 + new Random().nextInt(9000));
-        Booking booking = new Booking(bookingId, guest, target, nights);
-        activeBookings.put(bookingId, booking);
-
-        try (Connection conn = DBConnection.getConnection()) {
-            String insertGuest = "INSERT INTO guests (guest_id, full_name, phone) VALUES (?, ?, ?) " +
-                    "ON DUPLICATE KEY UPDATE full_name=?, phone=?";
-            try (PreparedStatement ps = conn.prepareStatement(insertGuest)) {
-                ps.setString(1, guest.getGuestId());
-                ps.setString(2, guest.getFullName());
-                ps.setString(3, guest.getPhone());
-                ps.setString(4, guest.getFullName());
-                ps.setString(5, guest.getPhone());
-                ps.executeUpdate();
-            }
-
-            String insertBooking = "INSERT INTO bookings (booking_id, guest_id, room_number, nights, total_tariff, status) VALUES (?, ?, ?, ?, ?, 'ACTIVE')";
-            try (PreparedStatement ps = conn.prepareStatement(insertBooking)) {
-                ps.setString(1, bookingId);
-                ps.setString(2, guest.getGuestId());
-                ps.setInt(3, roomNumber);
-                ps.setInt(4, nights);
-                ps.setDouble(5, booking.getTotalTariff());
-                ps.executeUpdate();
-            }
-
-            String updateRoom = "UPDATE rooms SET is_booked = TRUE WHERE room_number = ?";
-            try (PreparedStatement ps = conn.prepareStatement(updateRoom)) {
-                ps.setInt(1, roomNumber);
-                ps.executeUpdate();
-            }
-        } catch (SQLException e) {
-            LoggerService.logError("Reservation SQL Sync", e);
-        }
-
+            throws RoomNotAvailableException, InvalidBookingException, SQLException {
+        Booking booking = reservations.reserve(guest, roomNumber, LocalDate.now(), nights, null, null);
+        inventory.stream().filter(r -> r.getRoomNumber() == roomNumber).findFirst().ifPresent(Room::book);
+        activeBookings.put(booking.getBookingRef(), booking);
         return booking;
     }
 
-    public Booking lookupBooking(String bookingId) {
-        return activeBookings.get(bookingId);
+    public Booking lookupBooking(String bookingRef) {
+        return activeBookings.get(bookingRef);
     }
 
-    public void finalizeCheckout(String bookingId) {
-        Booking b = activeBookings.remove(bookingId);
+    public void finalizeCheckout(String bookingRef, Payment payment) {
+        Booking b = activeBookings.remove(bookingRef);
         if (b != null) {
             b.getRoom().vacate();
-
+            inventory.stream().filter(r -> r.getRoomNumber() == b.getRoom().getRoomNumber())
+                    .findFirst().ifPresent(Room::vacate);
             try (Connection conn = DBConnection.getConnection()) {
-                String updateBooking = "UPDATE bookings SET status = 'SETTLED' WHERE booking_id = ?";
-                try (PreparedStatement ps = conn.prepareStatement(updateBooking)) {
-                    ps.setString(1, bookingId);
-                    ps.executeUpdate();
-                }
-
-                String updateRoom = "UPDATE rooms SET is_booked = FALSE WHERE room_number = ?";
-                try (PreparedStatement ps = conn.prepareStatement(updateRoom)) {
-                    ps.setInt(1, b.getRoom().getRoomNumber());
-                    ps.executeUpdate();
-                }
+                paymentDAO.insert(conn, b.getBookingId(), payment);
+                bookingDAO.checkout(bookingRef);
             } catch (SQLException e) {
                 LoggerService.logError("Checkout SQL Sync", e);
             }

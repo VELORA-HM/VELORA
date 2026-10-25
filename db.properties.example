@@ -1,0 +1,5 @@
+# Copy this file to db.properties (same folder) and put your MySQL password in it.
+# db.properties is in .gitignore, so your password never goes to GitHub.
+db.url=jdbc:mysql://localhost:3306/velora_db
+db.user=root
+db.password=YOUR_MYSQL_PASSWORD

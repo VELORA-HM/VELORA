@@ -20,7 +20,7 @@ public class InvoiceService {
             directory.mkdirs();
         }
 
-        String fileName = RECEIPTS_DIR + "/Invoice_" + booking.getBookingId() + ".txt";
+        String fileName = RECEIPTS_DIR + "/Invoice_" + booking.getBookingRef() + ".txt";
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String timestamp = dtf.format(LocalDateTime.now());
 
@@ -30,10 +30,10 @@ public class InvoiceService {
             writer.println("              OFFICIAL GUEST FOLIO & INVOICE              ");
             writer.println("==========================================================");
             writer.printf(" Generated On : %s\n", timestamp);
-            writer.printf(" Booking Ref  : %s\n", booking.getBookingId());
+            writer.printf(" Booking Ref  : %s\n", booking.getBookingRef());
             writer.println("----------------------------------------------------------");
             writer.println(" GUEST DETAILS:");
-            writer.printf("  Guest ID    : %s\n", booking.getGuest().getGuestId());
+            writer.printf("  Guest ID    : %d\n", booking.getGuest().getGuestId());
             writer.printf("  Full Name   : %s\n", booking.getGuest().getFullName());
             writer.printf("  Contact     : %s\n", booking.getGuest().getPhone());
             writer.println("----------------------------------------------------------");
